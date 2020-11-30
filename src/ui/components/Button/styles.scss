@@ -1,0 +1,41 @@
+@import "../../../assets/scss/theme";
+
+
+.button {
+  border-style: solid;
+  border-width: 0px 0px 3px;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1) inset;
+  color: #f9f9f9;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: space-around;
+  overflow: hidden;
+  text-align: center;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  transition: all 200ms ease-in-out 0s;
+  white-space: nowrap;
+  padding: 11px 29px 10px;
+  background-color: #79ab86;
+  border-color: #468263;
+  margin: 10px;
+  font-size: 1.2em;
+  font-family: $default-font;
+  outline: none;
+
+  &:hover {
+    background-color: #468263;
+    border-color: rgba(0, 0, 0, 0.5);
+  }
+
+  &:disabled {
+    background: lightgray;
+    border-color: #868686;
+
+    &:hover {
+      background-color: lightgray;
+      border-color: #868686;
+    }
+  }
+}

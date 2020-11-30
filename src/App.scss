@@ -1,0 +1,31 @@
+@import "./assets/scss/theme";
+
+@font-face {
+  font-family: 'SnowyXMass';
+  src: url('./assets/fonts/SnowyChristmas.otf') format("opentype")
+}
+
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('./assets/fonts/JosefinSans-Regular.ttf') format("opentype")
+}
+
+.app {
+  color: #f9f9f9;
+
+  .lightrope {
+    top: 0;
+    margin-top: -15px;
+  }
+}
+
+body {
+  font-family: $default-font;
+  background-color: $bg-color;
+  color: #f9f9f9;
+  padding: 50px 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $title-font;
+}

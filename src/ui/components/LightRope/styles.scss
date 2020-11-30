@@ -1,0 +1,121 @@
+$globe-width: 12px;
+$globe-height: 28px;
+$globe-spacing: 38px;
+$globe-spread: 3px;
+$light-off-opacity: 0.5;
+
+@keyframes flash-1 {
+  0%, 100% {
+    background: rgb(137, 255, 23);
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgb(128, 255, 0);
+  }
+  50% {
+    background: rgba(3, 252, 168, $light-off-opacity);
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(3, 252, 168, 0.4);
+  }
+}
+
+@keyframes flash-2 {
+  0%, 100% {
+    background: rgb(255, 251, 0);
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgb(255, 221, 0);
+  }
+  50% {
+    background: rgba(165, 252, 2, $light-off-opacity);
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(165, 252, 2, 0.4);
+  }
+}
+
+@keyframes flash-3 {
+  0%, 100% {
+    background: rgb(250, 65, 65);
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgb(141, 81, 117);
+  }
+  50% {
+    background: rgba(255, 0, 51, $light-off-opacity);
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(255, 0, 51, 0.4);
+  }
+}
+
+.lightrope {
+  z-index: 15;
+  position: absolute;
+  text-align: center;
+  white-space: nowrap;
+  margin-left: -32px;
+  overflow: hidden;
+  padding: 0;
+  pointer-events: none;
+  width: 100%;
+
+  li {
+    position: relative;
+    animation-fill-mode: both;
+    animation-iteration-count: infinite;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: $globe-width;
+    height: $globe-height;
+    border-radius: 50%;
+    margin: $globe-spacing/2;
+    display: inline-block;
+    background: rgba(0, 252, 31, 1);
+    box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(143, 255, 26, 1);
+    animation-name: flash-1;
+    animation-duration: 2s;
+
+    &:nth-child(2n+1) {
+      background: rgba(255, 251, 0, 1);
+      box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgba(255, 221, 0, 0.5);
+      animation-name: flash-2;
+      animation-duration: 0.4s;
+    }
+
+    &:nth-child(4n+2) {
+      background: rgba(250, 65, 65, 1);
+      box-shadow: 0px $globe-height/6 $globe-width*2 $globe-spread rgb(155, 93, 131);
+      animation-name: flash-3;
+      animation-duration: 1.1s;
+    }
+
+    &:nth-child(odd) {
+      animation-duration: 1.8s;
+    }
+
+    &:nth-child(3n+1) {
+      animation-duration: 1.4s;
+    }
+
+    &:before {
+      content: "";
+      position: absolute;
+      background: #222;
+      width: ($globe-width - 2);
+      height: $globe-height/3;
+      border-radius: 3px;
+      top: (0 - ($globe-height/6));
+      left: 1px;
+    }
+
+    &:after {
+      content: "";
+      top: (0 - $globe-height/2);
+      left: $globe-width - 3;
+      position: absolute;
+      width: $globe-spacing + 12;
+      height: ($globe-height/3 * 2);
+      border-bottom: solid #222 2px;
+      border-radius: 50%;
+    }
+
+    &:last-child:after {
+      content: none;
+    }
+
+    &:first-child {
+      margin-left: -$globe-spacing;
+    }
+  }
+}
+

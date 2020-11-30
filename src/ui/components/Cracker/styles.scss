@@ -1,0 +1,279 @@
+@import "bourbon";
+
+@import url(https://fonts.googleapis.com/css?family=Shadows+Into+Light+Two);
+
+$cracker--bk-color: #8ed48a;
+$bg-color: #94392b;
+
+
+.crack {
+  &:hover {
+    .cracker-left {
+      left: -110px;
+      top: 50px;
+      transform: rotate(-20deg);
+    }
+
+    .cracker-right {
+      right: -110px;
+      top: 50px;
+      transform: rotate(20deg);
+    }
+  }
+}
+
+
+.cracksBg {
+  background-image: url("./assets/cracks.png");
+  background-size: 100% 100%;
+  width: 40px;
+  position: absolute;
+  z-index: 50;
+  left: 47%;
+  top: 330px;
+  pointer-events: none;
+}
+
+
+.cracker {
+  width: 450px;
+  height: 90px;
+  margin: 70px auto 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.cracker-left, .cracker-right {
+  transition: all 0.5s ease-in-out;
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  background-color: $cracker--bk-color;
+}
+
+.cracker-left {
+  left: 0;
+}
+
+.cracker-right {
+  right: 0;
+}
+
+.cracker-left-inner, .cracker-right-inner {
+  position: relative;
+  height: 100%;
+  width: 100%;
+
+  &:before {
+    content: "";
+    height: 100%;
+    width: 10px;
+    background-color: darken($cracker--bk-color, 10%);
+    position: absolute;
+    z-index: 10;
+    border-radius: 50%;
+  }
+}
+
+.cracker-left-inner {
+  &:before {
+    left: -5px;
+    top: 0;
+  }
+}
+
+.cracker-right-inner {
+  &:before {
+    right: -5px;
+    top: 0;
+  }
+}
+
+
+.cracker-message {
+  padding: 10px 0;
+  width: 45%;
+  margin: 0 auto;
+
+  .cracker-message__inner {
+    padding: 10px;
+    background: lighten(#d2d2d2, 10%);
+    color: darken(#d2d2d2, 40%);
+    text-align: center;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: 'Shadows Into Light Two', cursive;
+    border: 1px solid lighten(#d2d2d2, 2%);
+    box-shadow: 2px 2px 30px #d2d2d2;
+  }
+}
+
+
+.cracker-left__tail,
+.cracker-left__end,
+.cracker-left__body,
+.cracker-right__tail,
+.cracker-right__end,
+.cracker-right__body,
+.cracker-left__mask-top,
+.cracker-left__mask-bottom,
+.cracker-right__mask-top,
+.cracker-right__mask-bottom {
+  position: absolute;
+}
+
+.cracker-left__tail {
+  left: 0;
+}
+
+.cracker-right__tail {
+  right: 0;
+}
+
+.cracker-left__tail, .cracker-right__tail {
+  width: 100px;
+  height: 100%;
+  background-color: lighten($cracker--bk-color, 10%);
+}
+
+.cracker-left__end, .cracker-right__end {
+  width: 20px;
+  height: 100%;
+  background-color: darken($cracker--bk-color, 10%);
+
+  &:before {
+    content: "";
+    height: 65px;
+    width: 15px;
+    background-color: #ffff00;
+    position: absolute;
+    top: 12px;
+    z-index: 15;
+    border: 1px solid darken(#FFB20F, 5%);
+    border-radius: 5em;
+  }
+}
+
+.cracker-left__end {
+  left: 85px;
+
+  &:before {
+    left: -10px;
+  }
+}
+
+.cracker-right__end {
+  right: 85px;
+
+  &:before {
+    right: -10px;
+  }
+}
+
+.cracker-left__mask-top,
+.cracker-left__mask-bottom,
+.cracker-right__mask-top,
+.cracker-right__mask-bottom {
+  z-index: 10;
+}
+
+.cracker-left__mask-top,
+.cracker-left__mask-bottom,
+.cracker-right__mask-top,
+.cracker-right__mask-bottom {
+  width: 140px;
+  height: 25px;
+}
+
+.cracker-left__mask-top,
+.cracker-left__mask-bottom {
+  left: 20px;
+}
+
+.cracker-right__mask-top,
+.cracker-right__mask-bottom {
+  right: 20px;
+}
+
+%mask {
+  height: 0;
+  width: 0;
+  border-left: 65px solid transparent;
+  border-right: 28px solid transparent;
+  border-top: 25px solid $bg-color;
+  pointer-events: none;
+}
+
+%mask-2 {
+  height: 0;
+  width: 0;
+  border-left: 65px solid transparent;
+  border-right: 28px solid transparent;
+  border-bottom: 25px solid $bg-color;
+  pointer-events: none;
+}
+
+
+.cracker-left__mask-top,
+.cracker-right__mask-top {
+  top: -6px;
+}
+
+.cracker-left__mask-top {
+  @extend %mask;
+}
+
+.cracker-left__mask-bottom {
+  @extend %mask-2;
+}
+
+.cracker-right__mask-top {
+  transform: rotate(-180deg);
+  @extend %mask-2;
+}
+
+.cracker-right__mask-bottom {
+  transform: rotate(-180deg);
+  @extend %mask;
+}
+
+.cracker-left__mask-bottom,
+.cracker-right__mask-bottom {
+  bottom: -6px;
+}
+
+.cracker-left-zigzag {
+  position: absolute;
+  right: -1px;
+  top: 0;
+  height: 100%;
+
+  .cracker-left-zigzag__item {
+    @include triangle(left, 20px, 16px, $bg-color);
+  }
+}
+
+
+.cracker-right-zigzag {
+  position: absolute;
+  left: -20px;
+  top: 0;
+  height: 100%;
+
+  .cracker-right-zigzag__item {
+    @include triangle(left, 20px, 16px, $cracker--bk-color);
+  }
+}
+
+.hover-me-text {
+  text-align: center;
+  margin-top: 50px;
+  font-family: 'Shadows Into Light Two', cursive;
+  font-weight: bold;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 50;
+}

@@ -1,0 +1,14 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-recommended-scss"],
+  "rules": {
+    "color-hex-case": "upper",
+    "no-descending-specificity": null,
+    "selector-pseudo-class-no-unknown": [true, {
+      "ignorePseudoClasses": ["global"]
+    }]
+  },
+  "ignoreFiles": [
+    "/**/*.tsx",
+    "src/assessment-editor/**"
+  ]
+}

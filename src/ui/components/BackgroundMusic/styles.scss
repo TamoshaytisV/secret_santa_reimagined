@@ -1,0 +1,11 @@
+.player {
+  display: inline-flex;
+  position: absolute;
+  right: 50px;
+  top: 50px;
+
+  svg {
+    color: white;
+    fill: white;
+  }
+}

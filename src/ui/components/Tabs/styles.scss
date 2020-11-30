@@ -1,0 +1,22 @@
+.tab {
+  display: inline-flex;
+  padding: 10px 15px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.active {
+    border-bottom: solid 2px lightgoldenrodyellow;
+}
+
+.tabs {
+  width: 100%;
+  display: flex;
+}
+
+.tabContent {
+  display: inline-flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
