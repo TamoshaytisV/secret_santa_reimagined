@@ -9,9 +9,20 @@ import {FirebaseAuthContext} from "../firebase";
 
 
 export const LoginForm = ({onError}: { onError: { (error: ErrorEvent): void } }) => {
-    const [inProgress, setInProgress] = useState<boolean>();
+    const [inProgress, setInProgress] = useState<boolean>(false);
     const firebaseCtx = useContext(FirebaseAuthContext);
     const {client, loginCallback} = firebaseCtx;
+
+    const login = async () => {
+        setInProgress(true);
+        try {
+            const result = await client.authenticate();
+            setInProgress(false);
+            loginCallback(result);
+        } catch (error) {
+            onError(error)
+        }
+    };
 
     useEffect(() => () => setInProgress(false));
 
@@ -21,15 +32,7 @@ export const LoginForm = ({onError}: { onError: { (error: ErrorEvent): void } })
                 <Title text='Secret Santa Sign Up!'/>
                 <p>Hello, Raccoon! Please authenticate with your RG account.</p>
                 <div className={styles.buttonContainer}>
-                    <Button disabled={inProgress}
-                            onClick={async () => {
-                                setInProgress(true);
-                                try {
-                                    await client.authenticate(loginCallback);
-                                } catch (error) {
-                                    onError(error)
-                                }
-                            }}>
+                    <Button disabled={inProgress} onClick={login}>
                         Sign in with Google
                     </Button>
                 </div>

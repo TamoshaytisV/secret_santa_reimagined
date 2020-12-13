@@ -1,9 +1,9 @@
 import {useContext, useEffect} from "react";
+import useSound from "use-sound";
 import {SantaContext} from "../../../user/Provider";
 
 import styles from './styles.scss';
 import sound from '../../../assets/sounds/bells.wav';
-import useSound from "use-sound";
 
 
 const Light = ({idx}: { idx: number }) => {

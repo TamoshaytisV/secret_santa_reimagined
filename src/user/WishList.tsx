@@ -1,25 +1,16 @@
 import React, {ChangeEvent, useContext, useEffect, useRef, useState} from "react";
-import firebase from "firebase/app";
-import DocumentData = firebase.firestore.DocumentData;
 import {Button} from "../ui/components/Button";
 import {FirebaseAuthContext} from "../firebase";
+import Send from '../ui/components/Icon/assets/send.svg';
+import Done from '../ui/components/Icon/assets/done.svg';
+import Error from '../ui/components/Icon/assets/error.svg';
+import Close from './assets/close.svg';
+import {Zoom} from "react-awesome-reveal";
+import {SantaContext} from "./Provider";
+import {Icon, Status} from "../ui/components/Icon";
+import {ProfileImage} from "./UserProfile";
 
 import styles from './styles.scss';
-import Send from './assets/send.svg';
-import Done from './assets/done.svg';
-import Error from './assets/error.svg';
-
-
-
-enum Status {
-    ERROR = 'error',
-    OK = 'ok'
-}
-
-
-const Icon = ({comp, ...props}: {comp: typeof Send | typeof Done | typeof Error}) => {
-    return <div className={styles.bounce}>{comp(props)}</div>;
-};
 
 
 const WishList = () => {
@@ -41,24 +32,17 @@ const WishList = () => {
     };
 
     useEffect(() => {
-        firebaseCtx.client.getWishList(firebaseCtx.user.uid).then((data: DocumentData) => {
-            if (!data.data()) {
-                ref.current!.placeholder = 'No letters to Santa found :( Go and add one';
-                setTimeout(() => {
-                    setValue( 'Dear Santa, ...');
-                }, 2500);
+        if (!firebaseCtx.wishlist) {
+            setValue('Dear Santa, ...');
+            return;
+        }
 
-                return;
-            }
-            setTimeout(() => {
-                setValue(data.data().text);
-                setIsLoading(false);
-            }, 1000);
-        });
-    }, []);
+        setValue(firebaseCtx.wishlist);
+        setIsLoading(false);
+    }, [firebaseCtx.wishlist]);
 
-    return <div className={styles.wishlist}>
-        <div>Leave your message to Santa ;)</div>
+    return <div className={styles.form}>
+        <div>Leave message to your Santa ;)</div>
         <textarea rows={4} ref={ref}
                   onChange={onChange}
                   value={value}
@@ -72,4 +56,27 @@ const WishList = () => {
     </div>;
 };
 
-export {WishList};
+
+const PresenteeWishList = ({value, onClose}: { value: string, onClose: () => void }) => {
+    const profile = useContext(SantaContext);
+
+    return value ?
+        <div className={styles.presenteeWishlistWrapper}>
+            <Zoom>
+                <div className={styles.close}><Close onClick={onClose}/></div>
+                <div className={styles.presenteeWishlist}>
+                    <p>
+                        <span className={styles.avatarWrapper}>
+                            <ProfileImage url={profile.presentee!.picture}/>
+                        </span>
+                        {profile.presentee?.name}
+                    </p>
+                    <p dangerouslySetInnerHTML={{__html: value}}/>
+                </div>
+            </Zoom>
+        </div> :
+        null;
+};
+
+
+export {WishList, PresenteeWishList};

@@ -6,6 +6,7 @@ export interface Presentee {
     name: string;
     uid: string;
     picture: string;
+    wishlist?: any;
 }
 
 
@@ -14,6 +15,7 @@ interface SantaProfileState {
     presentee?: Presentee | null;
     wishlist?: string | null;
     isLoading?: boolean;
+    error?: string | null;
 }
 
 
@@ -32,7 +34,8 @@ class SantaProfileProvider extends React.PureComponent<any, SantaProfileState> {
             isLoading: true,
             isSanta: false,
             presentee: null,
-            wishlist: null
+            wishlist: null,
+            error: null
         }
     }
 
@@ -40,14 +43,14 @@ class SantaProfileProvider extends React.PureComponent<any, SantaProfileState> {
         const {client, user, isLoading} = this.props.firebaseCtx;
 
         if (prevProps.firebaseCtx.isLoading && !isLoading) {
-            setTimeout(() => this.setState({isLoading: false}), 600);
+            setTimeout(() => this.setState({isLoading: false}), 100);
         }
 
         if (!client.eventRef || !user) return;
 
         if (this.state.presentee) return;
 
-        client.getPresentee(user.uid)
+        user && client.getPresentee(user.uid)
             .then(([presenteeUid, presentee]: [string, Presentee]) => {
                 if (!presenteeUid || !presentee) {
                     this.setState({
@@ -60,7 +63,8 @@ class SantaProfileProvider extends React.PureComponent<any, SantaProfileState> {
                     presentee: {
                         uid: presenteeUid,
                         name: presentee.name,
-                        picture: presentee.picture
+                        picture: presentee.picture,
+                        wishlist: presentee.wishlist || ''
                     },
                     isSanta: true,
                     isLoading: false
@@ -79,7 +83,8 @@ class SantaProfileProvider extends React.PureComponent<any, SantaProfileState> {
             presentee: this.state.presentee,
             isSanta: this.state.isSanta,
             update: this.update,
-            isLoading: this.state.isLoading
+            isLoading: this.state.isLoading,
+            error: this.state.error
         }}>
             {this.props.children}
         </SantaContext.Provider>;

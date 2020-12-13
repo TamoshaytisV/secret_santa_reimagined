@@ -12,6 +12,8 @@
     "@babel/core": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.1",
+    "@babel/runtime": "^7.12.5",
+    "@types/fontfaceobserver": "^0.0.6",
     "@types/howler": "^2.2.1",
     "@types/node": "^12.0.0",
     "@types/node-sass": "^4.11.1",
@@ -25,6 +27,7 @@
     "css-modules-typescript-loader": "^4.0.1",
     "file-loader": "^6.2.0",
     "firebase": "^8.1.1",
+    "fontfaceobserver": "^2.1.0",
     "fork-ts-checker-webpack-plugin": "^6.0.3",
     "html-webpack-plugin": "^4.5.0",
     "mini-css-extract-plugin": "^0.9.0",
@@ -45,6 +48,8 @@
     "web-vitals": "^0.2.4"
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/runtime-corejs3": "^7.12.5",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",

@@ -10,6 +10,30 @@
   src: url('./assets/fonts/JosefinSans-Regular.ttf') format("opentype")
 }
 
+@font-face {
+  font-family: 'Skinny Girl';
+  src: url('./assets/fonts/SkinnyGirl.otf') format("opentype")
+}
+
+$scrollbarBG: #fafab1;
+
+
+::-webkit-scrollbar {
+  width: 3px;
+  margin: 0;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $scrollbarBG;
+  border-radius: 6px;
+  border: none;
+}
+
+
 .app {
   color: #f9f9f9;
 

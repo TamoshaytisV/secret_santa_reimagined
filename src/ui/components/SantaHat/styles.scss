@@ -1,17 +1,8 @@
 .santahat {
   width: 140px;
-  top: -80px;
-  right: -45px;
-  transform: rotate(25deg);
+  top: -70px;
+  left: -60px;
+  transform: rotate(-20deg);
   position: absolute;
   z-index: 15;
-}
-
-@media (min-width: 780px) {
-  .santahat {
-    width: 140px;
-    top: -70px;
-    left: -60px;
-    transform: rotate(-20deg);
-  }
 }

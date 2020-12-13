@@ -36,14 +36,15 @@ const Message = ({clickHandler, children}: CrackerMessageProps) => {
 
 const Cracker = ({clickHandler, crackHandler, hidden}: CrackerProps) => {
     const ref = useRef<HTMLDivElement>(null);
-    const [play, {stop}] = useSound(sound);
+    const [play, {stop}] = useSound(sound, {volume: 0.5});
     const [hideMsg, setHideMsg] = useState<boolean>(false);
-    const [msgDelay, setMsgDelay] = useState<number>(300);
+    const [msgDelay, setMsgDelay] = useState<number>(250);
     let [hits, setHits] = useState<number>(0);
 
     const hoverHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        !hideMsg && setHideMsg(true);
-        msgDelay !== 50 && setMsgDelay(50);
+        if (hits >= HIT_LIMIT - 1)
+            !hideMsg && setHideMsg(true);
+        msgDelay !== 10 && setMsgDelay(10);
         setHits(++hits);
         play();
 
@@ -70,7 +71,7 @@ const Cracker = ({clickHandler, crackHandler, hidden}: CrackerProps) => {
                 transform: `rotate(${Math.random() < 0.5 ?'-' : ''}${Math.ceil(Math.random() * 35)}deg)`
             }} />
         }
-        <AttentionSeeker delay={500} effect={'wobble'}>
+        <AttentionSeeker delay={500} effect={'swing'}>
             <div onMouseEnter={hoverHandler}
                  onMouseLeave={mouseOutHandler}
                  ref={ref}
@@ -111,7 +112,7 @@ const Cracker = ({clickHandler, crackHandler, hidden}: CrackerProps) => {
         </AttentionSeeker>
         <Fade delay={msgDelay} reverse={hideMsg}>
             <p className={styles['hover-me-text']}>
-                Hover over the christmas cracker to get to know your presentee!
+                Break the christmas cracker to get to know your presentee!
             </p>
         </Fade>
     </React.Fragment>

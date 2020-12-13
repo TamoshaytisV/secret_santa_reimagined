@@ -18,6 +18,7 @@ const Player = ({url, autoPlay, volume}: PlayerProps) => {
   const [play, {isPlaying, pause}] = useSound<HowlOptions>(url, {
     volume: volume,
     loop: true,
+    preload: 'metadata'
   });
 
   useEffect(() => {

@@ -1,7 +1,12 @@
 import styles from "./styles.scss";
+import {useContext} from "react";
+import {PreoaderContext} from "../../../preloaders";
 
-const SantaHat = () => (
-    <img src={require('../../../assets/images/hat.png').default} className={styles.santahat} alt='santa hat' />
-);
+
+const SantaHat = () => {
+    const loader = useContext(PreoaderContext);
+
+    return <img src={loader.cache['hat.png']} className={styles.santahat} alt='santa hat'/>;
+};
 
 export {SantaHat};

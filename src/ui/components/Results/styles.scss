@@ -82,9 +82,12 @@ $itemsize: 6px;
   justify-content: center;
   flex-direction: column;
   text-align: center;
+  letter-spacing: 2px;
+   z-index: 4;
 
   img {
     border-radius: 50%;
+    max-width: 96px;
   }
 
   p {
@@ -176,6 +179,7 @@ $itemsize: 6px;
   &.one {
     animation: rotate-tree 6s infinite linear both;
     animation-delay: -1.7s;
+    z-index: 1;
 
     .light {
       background: #fcfbe9;
@@ -185,6 +189,7 @@ $itemsize: 6px;
   &.two {
     animation: rotate-tree 7s infinite linear both;
     animation-delay: -1s;
+     z-index: 2;
 
     .light {
       background: #e8a41d;
@@ -194,6 +199,7 @@ $itemsize: 6px;
   &.three {
     animation: rotate-tree 8s infinite linear both;
     animation-delay: -0.1s;
+     z-index: 3;
 
     .light {
       background: #f5e393;

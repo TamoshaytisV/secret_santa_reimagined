@@ -5,8 +5,14 @@ interface CssExports {
   'avatarWrapper': string;
   'bounce': string;
   'buttonWrapper': string;
+  'close': string;
+  'error': string;
+  'form': string;
+  'presenteeWishlist': string;
+  'presenteeWishlistWrapper': string;
+  'waitMsg': string;
   'wannaBe': string;
-  'wishlist': string;
+  'wishlistMsg': string;
 }
 export const cssExports: CssExports;
 export default cssExports;

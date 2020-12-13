@@ -12,6 +12,9 @@ const isProduction = (process.argv.indexOf('-p') >= 0 ||
     process.env.NODE_ENV === 'production') &&
     process.env.NODE_ENV !== 'dev';
 const runBundleReport = (process.env.RUN_BUNDLE_REPORT === 'true');
+const commitHash = require('child_process')
+    .execSync('git rev-parse --short HEAD').toString()
+    .trim();
 
 const rootPath = path.join(__dirname);
 const sourcePath = path.join(__dirname, 'src');
@@ -116,14 +119,14 @@ module.exports = {
                 test: /\.(eot|ttf|otf|woff|woff2)$/,
                 loader: 'file-loader',
                 options: {
-                    name: 'static/[path][name].[contenthash].[ext]',
+                    name: 'static/[path][name].[ext]',
                 }
             },
             {
                 test: /\.(jpg|gif)$/,
                 loader: 'file-loader',
                 options: {
-                    name: 'static/[path][name].[contenthash].[ext]',
+                    name: `static/[path][name].[${commitHash}].[ext]`,
                 }
             },
             {
@@ -133,7 +136,7 @@ module.exports = {
                         loader: 'url-loader',
                         options: {
                             limit: 6000,
-                            name: 'static/[path][name].[contenthash].[ext]',
+                            name: `static/[path][name].${commitHash}.[ext]`,
                         }
                     }
                 ],
@@ -149,11 +152,11 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(ogg|wav)$/,
+                test: /\.(ogg|wav|mp3)$/,
                 loader: 'file-loader',
                 include: [path.resolve(__dirname, 'src/assets/sounds')],
                 options: {
-                    name: 'static/media/[path][name].[contenthash].[ext]'
+                    name: `static/media/[path][name].[ext]`
                 }
             }
         ],
@@ -185,6 +188,7 @@ module.exports = {
         new webpack.EnvironmentPlugin({
             NODE_ENV: 'development', // use 'development' unless process.env.NODE_ENV is defined
             DEBUG: false,
+            COMMIT_HASH: commitHash,
             DISABLE_IN_PROGRESS_FEATURES: false,
         }),
         new Dotenv(),

@@ -1,46 +1,90 @@
-# Getting Started with Create React App
+## Secret santa (typescript + React + firebase)
+### Install and run
+    yarn install
+    yarn start
+    
+### Design inspired by
+- https://codepen.io/lution/pen/VqbLjq
+- https://codemyui.com/css-only-bon-bons-or-christmas-cracker/
+- https://codemyui.com/pure-css-3d-christmas-tree-animation/
+- https://codemyui.com/christmas-lights-pure-css/
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Firebase
+In this project i used the Firebase Auth and Firestore as a backend part.
 
-## Available Scripts
+Setup the new project in the firebase console and copy a config which firebase suggests.
 
-In the project directory, you can run:
+Create `.env` file in the project root and assign appropriate variables values
+```shell script
+FIREBASE_PROJECT_ID=
+FIREBASE_SENDER_ID=
+FIREBASE_APP_ID=
+FIREBASE_API_KEY=
 
-### `yarn start`
+GOOGLE_DOMAIN=
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+You also migt want to set security rules for the firestore so please reffer to the official docs https://firebase.google.com/docs/firestore/security/rules-conditions
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+I used the following config to restrict access only to users from my organization
 
-### `yarn test`
+    rules_version = '2';
+    service cloud.firestore {
+      match /databases/{database}/documents {
+          function isValidEmail() {
+            return (request.auth.token.email.matches('.*@mydomain[.]com$') && 
+            request.auth.token.email_verified);
+          }
+        match /{document=**} {
+          allow read, write: if isValidEmail();
+        }
+      }
+    }
+    
+#### Authentication
+I used google authentication as a way for users to authorize. You can use any firebase backend listed in https://console.firebase.google.com/project/%your-project%/authentication/providers and supported by [firebase](https://github.com/firebase/firebase-js-sdk/tree/2ac31a1dbadbaf1d158b7c664567efd7a651bf81/packages-exp/auth-exp/src/core/providers)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Pass the provider class of your choice to the props of `FirebaseAuthProvider` component in `index.tsx` file
+```jsx
+<FirebaseAuthProvider
+    provider={TwitterAuthProvider}
+    options={{...}}
+    scope={[...]}
+>
+    <App/>
+</FirebaseAuthProvider>
+```
 
-### `yarn build`
+#### Event
+Each year you might have different users and they should definitelly choose different presentees on each new event.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+In order to achieve this, some manual work should be done in firebase console:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Create new collection named `event` in Firestore
+- Add the new document with ID equalsto the next year, e.g. 2021
+- Add the following fields in the document with values
+```js
+active (boolean) true
+started (boolean) false
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Each year you should create new event and make it active as well as set inactive previous event. Having multiple events active will result in error.
 
-### `yarn eject`
+`started` param allows you to restrict users from selecting presentees. Users will only be able to resister and wait for the event to start. This can be helpful to ensure you have some minimal number of participants before they start selection process.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+You can start the event by manually changing `started` value from `false` to `true`. Users' iterface will react immediatelly with no need to refresh the page.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Admin
+To make any user to see event stats, just add `isAdmin (boolean) true` to the /event/{year}/users/{userId} profile data
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### useSound
+I use this great lib fork https://github.com/joshwcomeau/use-sound to play sounds. I needed to make small adjustments so that's why i keep its copy until my PRs will be accepted.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Screenshots
+![login](screenshots/login.png?raw=true)
+![become santa](screenshots/before_cracker.png?raw=true)
+![cracker](screenshots/cracker_cracked.png?raw=true)
+![presentee](screenshots/presentee_selected.png?raw=true)
+![presentee wishlist](screenshots/presentee_wishlist.png?raw=true)
+![my wishlist](screenshots/my_wishlist.png?raw=true)
+![admin](screenshots/admin.png?raw=true)

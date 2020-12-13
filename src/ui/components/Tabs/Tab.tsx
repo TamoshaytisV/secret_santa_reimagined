@@ -1,6 +1,6 @@
 import styles from './styles.scss';
 
-interface TabProps {
+export interface TabProps {
     label: string;
     active?: boolean;
     onClick?: () => void;

@@ -1,21 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import firebase from "firebase/app";
+import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {FirebaseAuthProvider} from "./firebase";
-import firebase from "firebase/app";
-import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
+import {PreloaderProvider} from "./preloaders";
 
 
 ReactDOM.render(
     <React.StrictMode>
-        <FirebaseAuthProvider
-            provider={GoogleAuthProvider}
-            options={{hd: 'raccoongang.com'}}
-            scope={['https://www.googleapis.com/auth/userinfo.profile']}
-        >
-            <App/>
-        </FirebaseAuthProvider>
+        <PreloaderProvider fonts={['SnowyXMass', 'Josefin Sans']}
+                           images={['hat.png']}>
+            <FirebaseAuthProvider
+                provider={GoogleAuthProvider}
+                options={{hd: process.env.GOOGLE_DOMAIN}}
+                scope={['https://www.googleapis.com/auth/userinfo.profile']}
+            >
+                <App/>
+            </FirebaseAuthProvider>
+        </PreloaderProvider>
     </React.StrictMode>,
     document.getElementById('root')
 );

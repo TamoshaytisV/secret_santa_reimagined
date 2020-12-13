@@ -1,13 +1,14 @@
 import firebase from "firebase/app";
+import bind from "bind-decorator";
 import 'firebase/auth';
 import 'firebase/firestore';
 import Firestore = firebase.firestore.Firestore;
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import DocumentData = firebase.firestore.DocumentData;
+import FirestoreError = firebase.firestore.FirestoreError;
+import FieldPath = firebase.firestore.FieldPath;
 import Fireapp = firebase.app.App;
 import Fireauth = firebase.auth.Auth;
-import UserCredentials = firebase.auth.UserCredential;
-import bind from "bind-decorator";
 import {Providers} from "./types";
 import {Presentee} from "../user/Provider";
 
@@ -18,6 +19,7 @@ class FireBase {
     provider: Providers;
     event: any;
     eventRef: any;
+    callbacks: Function[];
 
     constructor(app: Fireapp, authProvider: Providers) {
         this.db = app.firestore();
@@ -25,25 +27,20 @@ class FireBase {
         this.provider = authProvider;
         this.event = null;
         this.eventRef = null;
+        this.callbacks = [];
     }
 
-    private snapshot2array(snapshot: QuerySnapshot): DocumentData[] {
+    private getFirst(snapshot: QuerySnapshot): DocumentData {
         const ret: DocumentData[] = [];
         snapshot.forEach(doc => {
             ret.push(doc);
         });
-        return ret;
+        return ret[0];
     }
 
     @bind
-    async authenticate(cb?: { (result: UserCredentials): void }) {
-        const result = await firebase.auth().signInWithPopup(this.provider);
-        const profileData = result.additionalUserInfo?.profile;
-        const profile = Object.assign({}, profileData || {}, {has_santa: false});
-        await this.createProfile(result.user?.uid, profile);
-        if (cb) {
-            await cb(result);
-        }
+    async authenticate() {
+        return await firebase.auth().signInWithPopup(this.provider);
     }
 
     @bind
@@ -52,64 +49,78 @@ class FireBase {
     }
 
     @bind
-    async getActiveEvent() {
+    getActiveEvent(onEventUpdate: (e: any) => void, onEventError?: (e: any) => void) {
         if (this.event) return this.event;
 
-        const event = await this.db.collection('event')
+        return this.db.collection('event')
             .where('active', '==', true)
-            .get();
+            .onSnapshot((docSnapshot: QuerySnapshot<DocumentData>) => {
+                if (docSnapshot.empty) {
+                    throw Error('No active event found!');
+                }
+                if (docSnapshot.size > 1) {
+                    throw Error('Found multiple active events!');
+                }
 
-        if (event.empty) {
-            throw Error('No active event found!');
-        }
-        if (event.size > 1) {
-            throw Error('Found multiple active events!');
-        }
-
-        this.event = this.snapshot2array(event)[0];
-        this.eventRef = this.db.doc(`event/${this.event.id}`);
-        return this.event;
+                this.event = this.getFirst(docSnapshot);
+                this.eventRef = this.db.doc(`event/${this.event.id}`);
+                onEventUpdate(this.event);
+            }, (err: FirestoreError) => {
+                if (onEventError)
+                    onEventError(err);
+            });
     }
 
     @bind
-    createProfile(uid: string | undefined, profile: Object | null | undefined) {
+    async createProfile(uid: string | undefined, profile: Object | null | undefined) {
         if (!uid) throw Error('createProfile: User ID is ' + typeof uid);
         if (!profile) return;
-        return this.eventRef.collection('users').doc(uid).set(profile, {merge: true});
+        return await this.eventRef.collection('users').doc(uid).set(profile, {merge: true});
     }
 
     @bind
-    listUsers() {
-        return this.eventRef.collection('users').get();
+    async getProfile(uid: string) {
+        return await this.eventRef.collection('users').doc(uid).get();
     }
 
     @bind
-    async assignPresentee(santaUid: string) {
-        const usersList = await this.eventRef.collection('users')
-            // get list of users who was has not being selected as a presentee
-            .where('has_santa', '==', false).get()
-        const users: Presentee[] = [];
+    async isMySanta(myUid: string, otherUid: string) {
+        const mySanta = await this.eventRef.collection('santa').doc(otherUid).get();
+        if (mySanta.exists) {
+            return mySanta.data().presentee === myUid;
+        }
+        return false;
+    }
 
-        usersList.forEach((doc: any) => {
-            if (santaUid !== doc.id) {
-                const data = doc.data();
-                users.push({name: data.name, uid: doc.id, picture: data.picture});
-            }
-        });
+    @bind
+    watchPresentees(uid: string, callback: (w: Presentee[]) => void) {
+        return this.eventRef.collection('users')
+            .where('has_santa', '==', false)  // get list of users who was has not being selected as a presentee
+            .where(FieldPath.documentId(), 'not-in', [uid])  // do not select myself
+            .onSnapshot((docSnapshot: QuerySnapshot<DocumentData>) => {
+                const users: Presentee[] = [];
+                docSnapshot.forEach((doc: any) => {
+                    this.isMySanta(uid, doc.id).then((result: boolean) => {
+                        if (result) return;
 
-        const presentee = users[Math.floor(Math.random() * users.length)];
+                        const data = doc.data();
+                        users.push({name: data.name, uid: doc.id, picture: data.picture});
+                    });
+                });
+                callback(users);
+            });
+    }
 
+    @bind
+    async assignPresentee(santaUid: string, presenteeUid: string) {
         const santaRef = this.eventRef.collection('santa').doc(santaUid);
-        const presenteeRef = this.eventRef.collection('users').doc(presentee.uid);
+        const presenteeRef = this.eventRef.collection('users').doc(presenteeUid);
         try {
             await this.db.runTransaction(async (t) => {
-                const wasChoosen = await this.eventRef.collection('santa')
-                    .where('presentee', '==', presentee.uid).get();
-                if (!wasChoosen.empty) return;
-                await t.set(santaRef, {presentee: presentee.uid});
-                await t.update(presenteeRef, {'has_santa': true});
+                t.set(santaRef, {presentee: presenteeUid});
+                t.update(presenteeRef, {'has_santa': true});
             });
-        } catch (e) {
+         } catch (e) {
             console.log('Transaction failure:', e);
         }
     }
@@ -118,7 +129,7 @@ class FireBase {
     async getPresentee(santaUid: string) {
         const santa = await this.eventRef.collection('santa').doc(santaUid).get()
             .catch((e: ErrorEvent) => console.log(e));
-        if (santa.empty || !santa.data()) {
+        if (!santa.exists || !santa.data()) {
             return [null, null];
         }
         const presenteeUid = santa.data().presentee;
@@ -127,13 +138,26 @@ class FireBase {
     }
 
     @bind
-    saveWishList(santaUid: string, value: string) {
-        return this.eventRef.collection('wishlist').doc(santaUid).set({text: value});
+    async saveWishList(uid: string, value: string) {
+        return await this.db.collection('wishlist').doc(uid).set({text: value});
     }
 
     @bind
-    getWishList(santaUid: string) {
-        return this.eventRef.collection('wishlist').doc(santaUid).get();
+    watchWishList(uid: string, callback: (w: DocumentData) => void) {
+        return this.db.collection('wishlist')
+            .where(FieldPath.documentId(), 'in', [uid])
+            .onSnapshot((docSnapshot: QuerySnapshot<DocumentData>) => {
+                if (docSnapshot.empty) {
+                    console.log('No wishlist found for ' + uid);
+                }
+                const wishlist = this.getFirst(docSnapshot);
+                callback(wishlist);
+            });
+    }
+
+    @bind
+    async saveFeedback(uid: string, value: string) {
+        return await this.eventRef.collection('feedback').doc(uid).collection('messages').doc().set({text: value});
     }
 }
 

@@ -40,7 +40,63 @@
   margin-top: 20px;
 }
 
-.wishlist {
+.waitMsg {
+  width: 350px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 auto;
+
+  p {
+    line-height: 20px;
+    font-size: 18px;
+  }
+}
+
+.wishlistMsg {
+  position: absolute;
+  z-index: 50;
+  left: 92%;
+  margin-top: 30px;
+  cursor: pointer;
+
+  svg {
+    fill: white;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.presenteeWishlistWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.presenteeWishlist {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  font-family: 'Skinny Girl', sans-serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+
+  p:first-child {
+    width: 30%;
+    min-width: 160px;
+    text-align: center;
+  }
+
+  p:last-child {
+    width: 70%;
+    padding: 0 0 0 20px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+}
+
+.form {
   display: flex;
   margin-top: 30px;
   flex-direction: column;
@@ -63,12 +119,13 @@
     margin-top: 20px;
     padding: 30px;
     outline: none;
-    border: solid 1px #f5e393;
+    border: solid 1px #f6e9ab;
     border-radius: 12px;
-    color: #f1e7bd;
+    color: #f1eac9;
     letter-spacing: 2px;
     font-family: sans-serif;
     font-size: 16px;
+    max-width: calc(100% - (30px * 2));
 
     &::placeholder {
       color: lightgray;
@@ -92,5 +149,28 @@
     svg {
       fill: white;
     }
+  }
+}
+
+.close {
+  width: 100%;
+  display: inline-flex;
+  flex-direction: row-reverse;
+  cursor: pointer;
+
+  svg {
+    fill: white;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.error {
+  font-size: 18px;
+  padding: 0 75px;
+
+  p {
+    line-height: 35px;
   }
 }

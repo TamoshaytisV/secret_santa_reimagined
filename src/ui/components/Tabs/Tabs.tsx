@@ -4,7 +4,7 @@ import {Tab} from "./Tab";
 import styles from './styles.scss';
 
 
-interface Tab {
+export interface Tab {
     label: string;
     children?: any;
 }
